@@ -1,5 +1,6 @@
 package com.dayone.service;
 
+import com.dayone.exception.impl.NoCompanyException;
 import com.dayone.model.Company;
 import com.dayone.model.ScrapedResult;
 import com.dayone.persist.CompanyRepository;
@@ -72,14 +73,19 @@ public class CompanyService {
         this.trie.put(keyword, null);
     }
 
-    public List<String> autocomplete(String keyword) {
-        return (List<String>) this.trie.prefixMap(keyword).keySet()
-                .stream()
-                .limit(10)
-                .collect(Collectors.toList());
-    }
 
     public void deleteAutocompleteKeyword(String keyword) {
         this.trie.remove(keyword);
+    }
+
+    public String deleteCompany(String ticker) {
+        var company = this.companyRepository.findByTicker(ticker)
+                                    .orElseThrow(() -> new NoCompanyException());
+
+        this.dividendRepository.deleteAllByCompanyId(company.getId());
+        this.companyRepository.delete(company);
+
+        this.deleteAutocompleteKeyword(company.getName());
+        return company.getName();
     }
 }

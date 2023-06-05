@@ -35,17 +35,9 @@ public class FinanceService {
                                             .orElseThrow(() -> new NoCompanyException());
 
         // 2. 조회된 회사 ID 로 배당금 정보 조회
-        List< DividendEntity> dividendEntities = this.dividendRepository.findAllByCompanyId(company.getId());
+        List<DividendEntity> dividendEntities = this.dividendRepository.findAllByCompanyId(company.getId());
 
         // 3. 결과 조합 후 반환
-//        List<Dividend> dividends = new ArrayList<>();
-//        for (var entity : dividendEntities) {
-//            dividends.add(Dividend.builder()
-//                                    .date(entity.getDate())
-//                                    .dividend(entity.getDividend())
-//                                    .build());
-//        }
-
         List<Dividend> dividends = dividendEntities.stream()
                                             .map(e -> new Dividend(e.getDate(), e.getDividend()))
                                             .collect(Collectors.toList());

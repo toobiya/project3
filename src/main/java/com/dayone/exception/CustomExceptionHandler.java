@@ -17,6 +17,7 @@ public class CustomExceptionHandler {
                                         .code(e.getStatusCode())
                                         .message(e.getMassage())
                                         .build();
+
         return new ResponseEntity<>(errorResponse, HttpStatus.resolve(e.getStatusCode()));
     }
 }
